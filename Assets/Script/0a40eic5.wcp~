@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI; // Necesario para trabajar con UI
 
 public class Player : MonoBehaviour
 {
@@ -24,7 +23,6 @@ public class Player : MonoBehaviour
 
     [Header("UI")]
     public GameObject felicitacionesUI; // Interfaz de felicitaciones
-    public GameObject mensajeSinLlaveUI; // Interfaz de mensaje sin llave
 
     private bool hasSwitchedLayers = false;
 
@@ -33,14 +31,10 @@ public class Player : MonoBehaviour
         SetTilemapsVisibility(defaultLayers, true);
         SetTilemapsVisibility(alternateLayers, false);
 
-        // Asegurarse de que las UIs estén ocultas al inicio
+        // Asegurarse de que la UI esté oculta al inicio
         if (felicitacionesUI != null)
         {
             felicitacionesUI.SetActive(false);
-        }
-        if (mensajeSinLlaveUI != null)
-        {
-            mensajeSinLlaveUI.SetActive(false);
         }
     }
 
@@ -119,44 +113,13 @@ public class Player : MonoBehaviour
             }
         }
 
-        // ⚡ Si el jugador entra en la zona de la casa
-        if (other.CompareTag("Casa"))
+        // ⚡ Si el jugador tiene la llave y entra en la zona de la casa, mostrar UI
+        if (other.CompareTag("Casa") && tieneLlave)
         {
-            if (tieneLlave)
+            if (felicitacionesUI != null)
             {
-                // Si tiene la llave, mostrar la UI de felicitaciones y cerrar el juego
-                if (felicitacionesUI != null)
-                {
-                    felicitacionesUI.SetActive(true); // Mostrar la UI
-                    StartCoroutine(CerrarJuegoDespuesDeSegundos(3)); // Cerrar el juego después de 3 segundos
-                }
+                felicitacionesUI.SetActive(true);
             }
-            else
-            {
-                // Si no tiene la llave, mostrar el mensaje
-                if (mensajeSinLlaveUI != null)
-                {
-                    mensajeSinLlaveUI.SetActive(true); // Mostrar el mensaje
-                    StartCoroutine(OcultarMensajeDespuesDeSegundos(3)); // Ocultar el mensaje después de 3 segundos
-                }
-            }
-        }
-    }
-
-    // Corrutina para cerrar el juego después de un tiempo
-    private IEnumerator CerrarJuegoDespuesDeSegundos(int segundos)
-    {
-        yield return new WaitForSeconds(segundos); // Esperar X segundos
-        Application.Quit(); // Cerrar el juego
-    }
-
-    // Corrutina para ocultar el mensaje después de un tiempo
-    private IEnumerator OcultarMensajeDespuesDeSegundos(int segundos)
-    {
-        yield return new WaitForSeconds(segundos); // Esperar X segundos
-        if (mensajeSinLlaveUI != null)
-        {
-            mensajeSinLlaveUI.SetActive(false); // Ocultar el mensaje
         }
     }
 
